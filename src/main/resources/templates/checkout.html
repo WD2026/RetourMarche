@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Paiement | RetourMarché</title>
+    <th:block th:replace="~{fragments/head :: head}"></th:block>
+    <th:block th:replace="~{fragments/head :: header}"></th:block>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .section-formulaire {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
+        }
+
+        .form-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .option-paiement {
+            border: 2px solid #dee2e6;
+            border-radius: 12px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-paiement.selected {
+            border-color: #212529;
+            background-color: #f8f9fa;
+        }
+
+        .icone-paiement {
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container mt-5 mb-5">
+        <div class="row g-5">
+            <!-- Checkout Forms -->
+            <div class="col-lg-8">
+                <h2 class="fw-bold mb-4">Finaliser la commande</h2>
+
+                <form th:action="@{/basket/checkout/confirm}" method="post" id="checkoutForm">
+
+                    <!-- Delivery Address -->
+                    <div class="section-formulaire">
+                        <h4 class="fw-bold mb-4">Adresse de livraison</h4>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="firstName" class="form-label">Prénom</label>
+                                <input type="text" class="form-control" id="firstName" name="firstName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="lastName" class="form-label">Nom</label>
+                                <input type="text" class="form-control" id="lastName" name="lastName" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="address" class="form-label">Adresse</label>
+                                <input type="text" class="form-control" id="address" name="address"
+                                    placeholder="123 Rue de la Paix" required>
+                            </div>
+                            <div class="col-md-5">
+                                <label for="country" class="form-label">Pays</label>
+                                <select class="form-select" id="country" name="country" required>
+                                    <option value="">Choisir...</option>
+                                    <option value="France">France</option>
+                                    <option value="Belgique">Belgique</option>
+                                    <option value="Suisse">Suisse</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="city" class="form-label">Ville</label>
+                                <input type="text" class="form-control" id="city" name="city" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="zip" class="form-label">Code postal</label>
+                                <input type="text" class="form-control" id="zip" name="zip" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Billing Address -->
+                    <div class="section-formulaire">
+                        <div class="form-check mb-3">
+                            <input type="checkbox" class="form-check-input" id="sameAddress" name="sameAddress" checked>
+                            <label class="form-check-label fw-bold" for="sameAddress">L'adresse de facturation est
+                                identique à l'adresse de livraison</label>
+                        </div>
+
+                        <div id="billingAddressSection" class="d-none">
+                            <h4 class="fw-bold mb-4 mt-4">Adresse de facturation</h4>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="billingFirstName" class="form-label">Prénom</label>
+                                    <input type="text" class="form-control" id="billingFirstName"
+                                        name="billingFirstName">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="billingLastName" class="form-label">Nom</label>
+                                    <input type="text" class="form-control" id="billingLastName" name="billingLastName">
+                                </div>
+                                <div class="col-12">
+                                    <label for="billingAddress" class="form-label">Adresse</label>
+                                    <input type="text" class="form-control" id="billingAddress" name="billingAddress">
+                                </div>
+                                <div class="col-md-5">
+                                    <label for="billingCountry" class="form-label">Pays</label>
+                                    <select class="form-select" id="billingCountry" name="billingCountry">
+                                        <option value="">Choisir...</option>
+                                        <option value="France">France</option>
+                                        <option value="Belgique">Belgique</option>
+                                        <option value="Suisse">Suisse</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="billingCity" class="form-label">Ville</label>
+                                    <input type="text" class="form-control" id="billingCity" name="billingCity">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="billingZip" class="form-label">Code postal</label>
+                                    <input type="text" class="form-control" id="billingZip" name="billingZip">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="section-formulaire">
+                        <h4 class="fw-bold mb-4">Moyen de paiement</h4>
+
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label
+                                    class="option-paiement w-100 d-flex flex-column align-items-center justify-content-center h-100 selected">
+                                    <input type="radio" name="paymentMethod" value="CREDIT_CARD" class="d-none" checked>
+                                    <i class="bi bi-credit-card-2-front icone-paiement mb-2"></i>
+                                    <span class="fw-bold">Carte bancaire</span>
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <label
+                                    class="option-paiement w-100 d-flex flex-column align-items-center justify-content-center h-100">
+                                    <input type="radio" name="paymentMethod" value="PAYPAL" class="d-none">
+                                    <i class="bi bi-paypal icone-paiement mb-2"></i>
+                                    <span class="fw-bold">PayPal</span>
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <label
+                                    class="option-paiement w-100 d-flex flex-column align-items-center justify-content-center h-100">
+                                    <input type="radio" name="paymentMethod" value="APPLE_PAY" class="d-none">
+                                    <i class="bi bi-apple icone-paiement mb-2"></i>
+                                    <span class="fw-bold">Apple Pay</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-dark w-100 rounded-pill py-3 fw-bold shadow-sm fs-5 mt-3" type="submit">
+                        Confirmer la commande
+                    </button>
+                </form>
+            </div>
+
+            <!-- Summary -->
+            <div class="col-lg-4">
+                <div th:replace="~{fragments/cart_summary :: recap(true)}"></div>
+            </div>
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/head :: footer}"></th:block>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Handle Billing Address Toggle
+            const sameAddressCheckbox = document.getElementById('sameAddress');
+            const billingAddressSection = document.getElementById('billingAddressSection');
+
+            sameAddressCheckbox.addEventListener('change', function () {
+                if (this.checked) {
+                    billingAddressSection.classList.add('d-none');
+                    // Remove required attributes from billing fields
+                    document.querySelectorAll('#billingAddressSection input, #billingAddressSection select').forEach(el => {
+                        el.required = false;
+                    });
+                } else {
+                    billingAddressSection.classList.remove('d-none');
+                    // Add required attributes to billing fields
+                    document.querySelectorAll('#billingAddressSection input, #billingAddressSection select').forEach(el => {
+                        el.required = true;
+                    });
+                }
+            });
+
+            // Handle Payment Method Selection
+            const paymentOptions = document.querySelectorAll('.option-paiement');
+
+            paymentOptions.forEach(option => {
+                option.addEventListener('click', function () {
+                    // Update visual selection
+                    paymentOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+
+                    // Handle radio button check
+                    const radio = this.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
