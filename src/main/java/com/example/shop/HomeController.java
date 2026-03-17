@@ -127,26 +127,37 @@ public class HomeController {
     }
 
     private Page<Product> getProductsByCategory(String category, Pageable pageable) {
-        return switch (category) {
-            case "smartphone" -> productRepository.findSmartphones(pageable);
-            case "ecouteurs" -> productRepository.findAccessoiresByType(TypeAccessoire.ECOUTEURS, pageable);
-            case "protections" -> productRepository.findAccessoiresByType(TypeAccessoire.PROTECTEUR_ECRAN, pageable);
-            case "coques" -> productRepository.findAccessoiresByType(TypeAccessoire.COQUE, pageable);
-            case "chargeurs" -> productRepository.findAccessoiresByType(TypeAccessoire.CHARGEUR, pageable);
-            default -> productRepository.findAll(pageable);
-        };
+        switch (category) {
+            case "smartphone":
+                return productRepository.findSmartphones(pageable);
+            case "ecouteurs":
+                return productRepository.findAccessoiresByType(TypeAccessoire.ECOUTEURS, pageable);
+            case "protections":
+                return productRepository.findAccessoiresByType(TypeAccessoire.PROTECTEUR_ECRAN, pageable);
+            case "coques":
+                return productRepository.findAccessoiresByType(TypeAccessoire.COQUE, pageable);
+            case "chargeurs":
+                return productRepository.findAccessoiresByType(TypeAccessoire.CHARGEUR, pageable);
+            default:
+                return productRepository.findAll(pageable);
+        }
     }
 
     private Page<Product> getProductsByCategoryAndSearch(String category, String search, Pageable pageable) {
-        return switch (category) {
-            case "smartphone" -> productRepository.searchSmartphones(search, pageable);
-            case "ecouteurs" -> productRepository.searchAccessoiresByType(search, TypeAccessoire.ECOUTEURS, pageable);
-            case "protections" ->
-                productRepository.searchAccessoiresByType(search, TypeAccessoire.PROTECTEUR_ECRAN, pageable);
-            case "coques" -> productRepository.searchAccessoiresByType(search, TypeAccessoire.COQUE, pageable);
-            case "chargeurs" -> productRepository.searchAccessoiresByType(search, TypeAccessoire.CHARGEUR, pageable);
-            default -> productRepository.searchProducts(search, pageable);
-        };
+        switch (category) {
+            case "smartphone":
+                return productRepository.searchSmartphones(search, pageable);
+            case "ecouteurs":
+                return productRepository.searchAccessoiresByType(search, TypeAccessoire.ECOUTEURS, pageable);
+            case "protections":
+                return productRepository.searchAccessoiresByType(search, TypeAccessoire.PROTECTEUR_ECRAN, pageable);
+            case "coques":
+                return productRepository.searchAccessoiresByType(search, TypeAccessoire.COQUE, pageable);
+            case "chargeurs":
+                return productRepository.searchAccessoiresByType(search, TypeAccessoire.CHARGEUR, pageable);
+            default:
+                return productRepository.searchProducts(search, pageable);
+        }
     }
 
     /**

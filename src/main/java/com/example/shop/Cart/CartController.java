@@ -216,12 +216,21 @@ public class CartController {
         double baseValue = 100.0;
 
         // Facteur d'état
-        double conditionFactor = switch (condition) {
-            case "NEUF" -> 2.0; // Bonus x2 pour du neuf
-            case "BON" -> 1.2; // Bonus x1.2 pour du bon état
-            case "MAUVAIS" -> 0.8; // Malus réduit pour mauvais état
-            default -> 1.0; // État moyen par défaut
-        };
+        double conditionFactor;
+        switch (condition) {
+            case "NEUF":
+                conditionFactor = 2.0; // Bonus x2 pour du neuf
+                break;
+            case "BON":
+                conditionFactor = 1.2; // Bonus x1.2 pour du bon état
+                break;
+            case "MAUVAIS":
+                conditionFactor = 0.8; // Malus réduit pour mauvais état
+                break;
+            default:
+                conditionFactor = 1.0; // État moyen par défaut
+                break;
+        }
 
         // Facteur d'année
         int age = currentYear - year;

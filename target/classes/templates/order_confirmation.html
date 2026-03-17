@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Confirmation de commande | RetourMarché</title>
+    <th:block th:replace="~{fragments/head :: head}"></th:block>
+    <th:block th:replace="~{fragments/head :: header}"></th:block>
+</head>
+
+<body class="bg-light">
+    <main class="container mt-5 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <div class="card border-0 shadow-sm rounded-4 p-5">
+                    <div class="mb-4">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+                    </div>
+                    <h2 class="fw-bold mb-3">Merci pour votre commande !</h2>
+                    <p class="fs-5 text-muted mb-4">
+                        Votre commande n° <span class="fw-bold text-dark" th:text="${orderId}">X</span> a bien été
+                        enregistrée.
+                    </p>
+                    <div>
+                        <a href="/" class="btn btn-dark rounded-pill px-5 py-3 fw-bold">
+                            Retour à l'accueil
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/head :: footer}"></th:block>
+</body>
+
+</html>
