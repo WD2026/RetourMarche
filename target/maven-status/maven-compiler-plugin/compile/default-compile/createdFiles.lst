@@ -1,8 +1,11 @@
 com/example/shop/Cart/CartController.class
+com/example/shop/Admin/SecurityConfig.class
 com/example/shop/Order/Order.class
 com/example/shop/Product/ProductController.class
 com/example/shop/Cart/InsuranceType.class
+com/example/shop/config/UserInterceptor.class
 com/example/shop/Order/OrderItem.class
+com/example/shop/User/CustomUserDetailsService.class
 com/example/shop/Admin/AuthController.class
 com/example/shop/Product/InsufficientStockException.class
 com/example/shop/Cart/CartService.class
@@ -11,6 +14,7 @@ com/example/shop/Accessoire/TypeAccessoire.class
 com/example/shop/Smartphone/SmartphoneRepository.class
 com/example/shop/Smartphone/Smartphone.class
 com/example/shop/Cart/CartRepository.class
+com/example/shop/config/WebConfig.class
 com/example/shop/Product/ProductGroupDTO.class
 com/example/shop/Order/OrderRepository.class
 com/example/shop/Product/ProductRepository.class

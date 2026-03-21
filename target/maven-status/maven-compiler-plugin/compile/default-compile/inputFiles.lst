@@ -4,6 +4,7 @@
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Admin/AuthController.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Admin/DashboardController.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Admin/PasswordConfig.java
+/home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Admin/SecurityConfig.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Cart/Cart.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Cart/CartController.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Cart/CartRepository.java
@@ -21,5 +22,8 @@
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/RetourMarcheApplication.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Smartphone/Smartphone.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Smartphone/SmartphoneRepository.java
+/home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/User/CustomUserDetailsService.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/User/User.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/User/UserRepository.java
+/home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/config/UserInterceptor.java
+/home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/config/WebConfig.java

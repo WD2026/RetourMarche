@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.shop.User.User;
 import com.example.shop.User.UserRepository;
 
-import jakarta.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Contrôleur gérant l'authentification (connexion, inscription).
@@ -20,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Controller
 public class AuthController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     //intéragir avec la BDD
     @Autowired
@@ -29,10 +31,6 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @GetMapping("/login")
-    public String showLoginPage() {
-        return "login";
-    }
 
     @PostMapping("/register")
     public String register(@RequestParam String nom,
@@ -73,32 +71,22 @@ public class AuthController {
         user.setRole("USER");
         userRepository.save(user);
 
-        return "redirect:/login";
+        logger.info("New user registered: {}", email);
+        return "redirect:/login?registered=true";
     }
 
-    @PostMapping("/login")
-    public String login(@RequestParam String email,
-            @RequestParam String password,
-            Model model,
-            HttpSession session) {
-        
-        //recupérer le compte à l'aide du mail entré par la personne que l'on va chercher dans la BDD
-        User user = userRepository.findByEmail(email);
-        
-        //vérifier que le compte existe avec cet e-mail et que l'on n'a pas rien récupéré
-        if (user == null) {
-            model.addAttribute("error", "Aucun compte n'existe avec cet email.");
-            return "login";
+    @GetMapping("/login")
+    public String showLoginPage(@RequestParam(required = false) String error, @RequestParam(required = false) String logout, @RequestParam(required = false) String registered, Model model) {
+        if (error != null) {
+            model.addAttribute("error", "Email ou mot de passe incorrect.");
         }
-
-        //vérifier que le mot de passe haché de la BDD correspond à celui entré
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            model.addAttribute("error", "Mot de passe incorrect.");
-            return "login";
+        if (logout != null) {
+            model.addAttribute("message", "Vous avez été déconnecté avec succès.");
         }
-
-        session.setAttribute("user", user);
-        return "redirect:/";
+        if (registered != null) {
+            model.addAttribute("message", "Inscription réussie ! Vous pouvez vous connecter.");
+        }
+        return "login";
     }
 
 }
