@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: shop-app
+    env: docker
+    plan: free
+    region: frankfurt
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: shop-db
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: shop-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: shop-db
+          property: password
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: none
+      - key: SPRING_FLYWAY_ENABLED
+        value: "true"
+
+databases:
+  - name: shop-db
+    plan: free
+    region: frankfurt
+    databaseName: shop
+    user: shopuser

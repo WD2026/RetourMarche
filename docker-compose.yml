@@ -5,9 +5,9 @@ services:
     image: postgres:15-alpine
     container_name: shop-db
     environment:
-      POSTGRES_DB: shopdb
-      POSTGRES_USER: shopuser
-      POSTGRES_PASSWORD: shoppassword
+      POSTGRES_DB: shop
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -21,11 +21,12 @@ services:
     depends_on:
       - db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/shopdb
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/shop
       SPRING_DATASOURCE_DRIVER: org.postgresql.Driver
-      SPRING_DATASOURCE_USERNAME: shopuser
-      SPRING_DATASOURCE_PASSWORD: shoppassword
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+      SPRING_FLYWAY_ENABLED: "true"
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
     networks:
       - shop-network

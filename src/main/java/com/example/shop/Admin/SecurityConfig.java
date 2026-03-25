@@ -13,14 +13,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/h2-console/**")
-            )
-            .headers(headers -> headers
-                .frameOptions(frame -> frame.sameOrigin())
-            )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login", "/register", "/product/**", "/css/**", "/js/**", "/images/**", "/icones/**", "/*.png", "/h2-console/**").permitAll()
+                .requestMatchers("/", "/login", "/register", "/product/**", "/css/**", "/js/**", "/images/**", "/icones/**", "/*.png").permitAll()
                 .requestMatchers("/actuator/**").permitAll() // Secure this in production
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()

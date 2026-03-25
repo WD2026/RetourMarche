@@ -10,6 +10,8 @@
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Cart/CartRepository.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Cart/CartService.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Cart/InsuranceType.java
+/home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Common/CircuitBreakerController.java
+/home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Common/GlobalExceptionHandler.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/HomeController.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Order/Order.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Order/OrderItem.java
