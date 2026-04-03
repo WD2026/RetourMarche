@@ -16,6 +16,8 @@
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Order/Order.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Order/OrderItem.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Order/OrderRepository.java
+/home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Payment/PaymentController.java
+/home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Payment/StripeService.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Product/InsufficientStockException.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Product/Product.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/Product/ProductController.java
@@ -27,5 +29,6 @@
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/User/CustomUserDetailsService.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/User/User.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/User/UserRepository.java
+/home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/config/DataLoader.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/config/UserInterceptor.java
 /home/cytech/01_Kasetsart/WebProjet/RetourMarche/src/main/java/com/example/shop/config/WebConfig.java

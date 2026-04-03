@@ -27,6 +27,11 @@ public class Accessoire extends Product {
     private TypeAccessoire type;
 
     @ManyToMany
+    @jakarta.persistence.JoinTable(
+        name = "accessoire_smartphones",
+        joinColumns = @jakarta.persistence.JoinColumn(name = "accessoire_id"),
+        inverseJoinColumns = @jakarta.persistence.JoinColumn(name = "smartphones_id")
+    )
     private List<Smartphone> smartphones;
 
 }
