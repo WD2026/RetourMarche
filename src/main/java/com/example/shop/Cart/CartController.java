@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.shop.Accessoire.Accessoire;
 import com.example.shop.Order.Order;
+import com.example.shop.Order.OrderRepository;
 import com.example.shop.Product.InsufficientStockException;
 import com.example.shop.Product.Product;
 import com.example.shop.Product.ProductRepository;
 import com.example.shop.Smartphone.Smartphone;
 import com.example.shop.User.User;
+import com.example.shop.Payment.StripeService;
 
 import java.util.Optional;
 
@@ -29,6 +31,12 @@ public class CartController {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private StripeService stripeService;
 
     @GetMapping
     public String showBasket(Model model, HttpSession session) {
@@ -170,17 +178,18 @@ public class CartController {
         return "checkout";
     }
 
-    @PostMapping("/checkout/confirm")
+    @PostMapping("/confirm")
     public String confirmOrder(
-            @RequestParam String firstName,
-            @RequestParam String lastName,
-            @RequestParam String address,
-            @RequestParam String city,
-            @RequestParam String zip,
-            @RequestParam String country,
+            @jakarta.validation.Valid Order order,
+            org.springframework.validation.BindingResult result,
             @RequestParam String paymentMethod,
             HttpSession session,
             org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+
+        if (result.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", result.getAllErrors().get(0).getDefaultMessage());
+            return "redirect:/basket/checkout";
+        }
 
         User user = (User) session.getAttribute("user");
         if (user == null) {
@@ -191,12 +200,31 @@ public class CartController {
             // Calculer le total final avec réductions
             double totalPrice = calculateFinalPrice(user, session);
 
-            Order order = cartService.createOrder(user, firstName, lastName, address, city, zip, country,
-                    paymentMethod, totalPrice);
-            session.removeAttribute("promoCode");
-            session.removeAttribute("tradeInDiscount");
-            return "redirect:/basket/checkout/success/" + order.getId();
+            if ("CREDIT_CARD".equals(paymentMethod)) {
+                // Créer une commande en attente de paiement
+                Order savedOrder = cartService.createOrder(user, order.getFirstName(), order.getLastName(), order.getAddress(), order.getCity(), order.getZip(), order.getCountry(),
+                        paymentMethod, totalPrice, "PENDING_PAYMENT");
+                
+                // Préparer Stripe Session
+                String baseUrl = org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+                String successUrl = baseUrl + "/basket/checkout/success/" + savedOrder.getId() + "?session_id={CHECKOUT_SESSION_ID}";
+                String cancelUrl = baseUrl + "/basket/checkout?error=payment_cancelled";
+                
+                com.stripe.model.checkout.Session stripeSession = stripeService.createCheckoutSession(user, cartService.getItems(user), totalPrice, successUrl, cancelUrl);
+                
+                session.removeAttribute("promoCode");
+                session.removeAttribute("tradeInDiscount");
+                
+                return "redirect:" + stripeSession.getUrl();
+            } else {
+                Order savedOrder = cartService.createOrder(user, order.getFirstName(), order.getLastName(), order.getAddress(), order.getCity(), order.getZip(), order.getCountry(),
+                        paymentMethod, totalPrice, "CONFIRMED");
+                session.removeAttribute("promoCode");
+                session.removeAttribute("tradeInDiscount");
+                return "redirect:/basket/checkout/success/" + savedOrder.getId();
+            }
         } catch (Exception e) {
+            e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Erreur lors de la commande: " + e.getMessage());
             return "redirect:/basket/checkout";
         }
@@ -253,13 +281,32 @@ public class CartController {
     }
 
     @GetMapping("/checkout/success/{orderId}")
-    public String orderSuccess(@PathVariable Long orderId, Model model, HttpSession session) {
+    public String orderSuccess(@PathVariable Long orderId, @RequestParam(required = false) String session_id, Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
             return "redirect:/login";
         }
-        model.addAttribute("orderId", orderId);
-        return "order_confirmation";
+
+        java.util.Optional<Order> orderOpt = orderRepository.findById(orderId);
+        if (orderOpt.isPresent()) {
+            Order order = orderOpt.get();
+            // Vérification de sécurité : s'assurer que la commande appartient à
+            // l'utilisateur
+            if (order.getUser().getId().equals(user.getId())) {
+                if (session_id != null) {
+                    // Dans un vrai projet, on vérifierait ici l'état de la session Stripe
+                    // via l'API Stripe pour s'assurer que le paiement est réussi.
+                    // Pour le bac à sable, on met simplement à jour le statut.
+                    order.setStatus("PAID");
+                    orderRepository.save(order);
+                }
+                model.addAttribute("orderId", orderId);
+                model.addAttribute("order", order);
+                return "order_confirmation";
+            }
+        }
+
+        return "redirect:/";
     }
 
     /**

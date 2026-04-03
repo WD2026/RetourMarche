@@ -34,7 +34,7 @@ public class CartService {
 
     @Transactional
     public Order createOrder(User user, String firstName, String lastName, String address, String city, String zip,
-            String country, String paymentMethod, double finalTotal) {
+            String country, String paymentMethod, double finalTotal, String status) {
         List<Cart> cartItems = getItems(user);
         if (cartItems.isEmpty()) {
             throw new RuntimeException("Cart is empty");
@@ -43,7 +43,7 @@ public class CartService {
         Order order = new Order();
         order.setUser(user);
         order.setOrderDate(java.time.LocalDateTime.now());
-        order.setStatus("CONFIRMED");
+        order.setStatus(status);
         order.setFirstName(firstName);
         order.setLastName(lastName);
         order.setAddress(address);

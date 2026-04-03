@@ -36,11 +36,23 @@ public class Order {
     private String status; // ex: "CONFIRMED"
 
     // Adresse de livraison
+    @jakarta.validation.constraints.NotBlank(message = "Le prénom est obligatoire")
     private String firstName;
+
+    @jakarta.validation.constraints.NotBlank(message = "Le nom est obligatoire")
     private String lastName;
+
+    @jakarta.validation.constraints.NotBlank(message = "L'adresse est obligatoire")
     private String address;
+
+    @jakarta.validation.constraints.NotBlank(message = "La ville est obligatoire")
     private String city;
+
+    @jakarta.validation.constraints.NotBlank(message = "Le code postal est obligatoire")
+    @jakarta.validation.constraints.Pattern(regexp = "^[0-9]{5}$", message = "Le code postal doit contenir 5 chiffres")
     private String zip;
+
+    @jakarta.validation.constraints.NotBlank(message = "Le pays est obligatoire")
     private String country;
 
     // Moyen de paiement

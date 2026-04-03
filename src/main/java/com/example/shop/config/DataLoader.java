@@ -24,8 +24,8 @@ public class DataLoader implements CommandLineRunner {
             admin.setNom("Admin");
             admin.setPrenom("System");
             admin.setEmail("admin@gmail.com");
-            admin.setPassword(passwordEncoder.encode("1234"));
-            admin.setTelephone("0000000000");
+            admin.setPassword(passwordEncoder.encode("admin123")); // Min 6 chars
+            admin.setTelephone("0123456789"); // Valid French format
             admin.setRole("ADMIN");
             userRepository.save(admin);
             log.info("Admin user created successfully.");
