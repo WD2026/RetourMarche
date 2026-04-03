@@ -96,3 +96,8 @@
 **SATISFAIT** - Historique Git avec commits réguliers de tous les membres
 
 #### Note finale : 18/20
+
+Boutique : http://localhost:8081 (via Nginx) ou http://localhost:8080 (direct)
+Logs (Dozzle) : http://localhost:8888
+Metrics (Grafana) : http://localhost:3000 (admin / admin)
+Prometheus : http://localhost:9090
