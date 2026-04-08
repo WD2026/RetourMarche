@@ -76,7 +76,7 @@ public class CartService {
         order.setTotalPrice(finalTotal);
 
         orderRepository.save(order);
-        clearCart(user);
+        // clearCart(user); // Will be cleared after successful payment or confirmation
 
         return order;
     }

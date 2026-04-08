@@ -65,6 +65,10 @@
                                     </small>
                                 </div>
                                 <div class="d-flex align-items-center">
+                                    <span th:if="${order.status == 'PAID'}" class="badge bg-success me-3">Payé</span>
+                                    <span th:if="${order.status == 'PENDING_PAYMENT'}" class="badge bg-warning text-dark me-3">En attente</span>
+                                    <span th:if="${order.status == 'FAILED'}" class="badge bg-danger me-3">Échoué</span>
+                                    <span th:if="${order.status == 'CONFIRMED' && order.paymentMethod == 'CASH_ON_DELIVERY'}" class="badge bg-primary me-3">A payer à la livraison</span>
                                     <i class="bi bi-chevron-right text-muted"></i>
                                 </div>
                             </a>
