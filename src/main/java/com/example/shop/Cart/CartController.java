@@ -26,6 +26,8 @@ import java.util.Optional;
 @RequestMapping("/basket")
 public class CartController {
 
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CartController.class);
+
     @Autowired
     private CartService cartService;
 
@@ -37,6 +39,9 @@ public class CartController {
 
     @Autowired
     private StripeService stripeService;
+
+    @Autowired
+    private com.example.shop.Payment.PaymentRepository paymentRepository;
 
     @GetMapping
     public String showBasket(Model model, HttpSession session) {
@@ -199,6 +204,7 @@ public class CartController {
         try {
             // Calculer le total final avec réductions
             double totalPrice = calculateFinalPrice(user, session);
+            logger.info("Tentative de commande pour l'utilisateur {} - Total: {} - Méthode: {}", user.getEmail(), totalPrice, paymentMethod);
 
             if ("CREDIT_CARD".equals(paymentMethod)) {
                 // Créer une commande en attente de paiement
@@ -210,21 +216,33 @@ public class CartController {
                 String successUrl = baseUrl + "/basket/checkout/success/" + savedOrder.getId() + "?session_id={CHECKOUT_SESSION_ID}";
                 String cancelUrl = baseUrl + "/basket/checkout?error=payment_cancelled";
                 
+                logger.info("Création de la session Stripe pour la commande {}", savedOrder.getId());
                 com.stripe.model.checkout.Session stripeSession = stripeService.createCheckoutSession(user, cartService.getItems(user), totalPrice, successUrl, cancelUrl);
                 
+                // Enregistrer les détails du paiement
+                com.example.shop.Payment.Payment payment = new com.example.shop.Payment.Payment();
+                payment.setOrder(savedOrder);
+                payment.setStripeSessionId(stripeSession.getId());
+                payment.setAmount(totalPrice);
+                payment.setCurrency("eur");
+                payment.setStatus("PENDING");
+                paymentRepository.save(payment);
+
                 session.removeAttribute("promoCode");
                 session.removeAttribute("tradeInDiscount");
                 
+                logger.info("Redirection vers Stripe: {}", stripeSession.getUrl());
                 return "redirect:" + stripeSession.getUrl();
             } else {
                 Order savedOrder = cartService.createOrder(user, order.getFirstName(), order.getLastName(), order.getAddress(), order.getCity(), order.getZip(), order.getCountry(),
                         paymentMethod, totalPrice, "CONFIRMED");
+                cartService.clearCart(user); // Vider le panier immédiatement pour COD
                 session.removeAttribute("promoCode");
                 session.removeAttribute("tradeInDiscount");
                 return "redirect:/basket/checkout/success/" + savedOrder.getId();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la confirmation de commande", e);
             redirectAttributes.addFlashAttribute("error", "Erreur lors de la commande: " + e.getMessage());
             return "redirect:/basket/checkout";
         }
@@ -294,11 +312,15 @@ public class CartController {
             // l'utilisateur
             if (order.getUser().getId().equals(user.getId())) {
                 if (session_id != null) {
-                    // Dans un vrai projet, on vérifierait ici l'état de la session Stripe
-                    // via l'API Stripe pour s'assurer que le paiement est réussi.
-                    // Pour le bac à sable, on met simplement à jour le statut.
+                    // Update payment status if it exists
+                    paymentRepository.findByStripeSessionId(session_id).ifPresent(p -> {
+                        p.setStatus("SUCCEEDED");
+                        paymentRepository.save(p);
+                    });
+                    
                     order.setStatus("PAID");
                     orderRepository.save(order);
+                    cartService.clearCart(user); // Vider le panier après paiement réussi
                 }
                 model.addAttribute("orderId", orderId);
                 model.addAttribute("order", order);

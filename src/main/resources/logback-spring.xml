@@ -10,18 +10,7 @@
                 </timestamp>
                 <pattern>
                     <pattern>
-                        {
-                        "severity": "%level",
-                        "service": "retour-marche",
-                        "trace": "%X{traceId:-}",
-                        "span": "%X{spanId:-}",
-                        "parent": "%X{parentId:-}",
-                        "exportable": "%X{spanExportable:-}",
-                        "pid": "${PID:-}",
-                        "thread": "%thread",
-                        "class": "%logger{40}",
-                        "rest": "%message"
-                        }
+                        {"severity": "%level", "service": "retour-marche", "trace": "%X{traceId:-}", "span": "%X{spanId:-}", "parent": "%X{parentId:-}", "exportable": "%X{spanExportable:-}", "pid": "${PID:-}", "thread": "%thread", "class": "%logger{40}", "rest": "%message"}
                     </pattern>
                 </pattern>
             </providers>

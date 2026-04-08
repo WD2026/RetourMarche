@@ -28,6 +28,7 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: none
       SPRING_FLYWAY_ENABLED: "true"
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-your_secret_key_here}
     networks:
       - shop-network
 
@@ -70,6 +71,8 @@ services:
       - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
     networks:
       - shop-network
     depends_on:
