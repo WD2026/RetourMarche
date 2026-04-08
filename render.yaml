@@ -6,10 +6,18 @@ services:
     region: frankfurt
     healthCheckPath: /actuator/health
     envVars:
-      - key: SPRING_DATASOURCE_URL
+      - key: DB_HOST
         fromDatabase:
           name: shop-db
-          property: connectionString
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: shop-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: shop-db
+          property: database
       - key: SPRING_DATASOURCE_USERNAME
         fromDatabase:
           name: shop-db

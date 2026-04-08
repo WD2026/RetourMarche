@@ -39,7 +39,9 @@ public class AuthController {
             Model model) {
 
         if (result.hasErrors()) {
-            model.addAttribute("error", result.getAllErrors().get(0).getDefaultMessage());
+            String errorMessage = result.getAllErrors().get(0).getDefaultMessage();
+            logger.warn("Registration failed: Validation error for {}. Message: {}", user.getEmail(), errorMessage);
+            model.addAttribute("error", errorMessage);
             model.addAttribute("showRegister", true);
             model.addAttribute("user", user);
             return "login";
@@ -47,6 +49,7 @@ public class AuthController {
         
         //verifier que les éléments Password et la confirmation correspondent
         if (!user.getPassword().equals(passwordConfirm)) {
+            logger.warn("Registration failed: Passwords do not match for {}", user.getEmail());
             model.addAttribute("error", "Les mots de passe ne correspondent pas");
             model.addAttribute("showRegister", true);
             model.addAttribute("user", user);
@@ -55,6 +58,7 @@ public class AuthController {
 
         //vérifier que le compte n'existe pas déjà avec ce mail
         if (userRepository.existsByEmail(user.getEmail())) {
+            logger.warn("Registration failed: Email {} is already in use", user.getEmail());
             model.addAttribute("error", "Cet email est déjà utilisé, connectez-vous!");
             model.addAttribute("showRegister", true);
             return "login";
@@ -62,6 +66,7 @@ public class AuthController {
 
         //vérifier que le compte n'existe pas déjà avec ce phone
         if (userRepository.existsByTelephone(user.getTelephone())) {
+            logger.warn("Registration failed: Phone number {} is already in use", user.getTelephone());
             model.addAttribute("error", "Ce téléphone est déjà utilisé, connectez-vous!");
             model.addAttribute("showRegister", true);
             return "login";
@@ -74,7 +79,7 @@ public class AuthController {
         user.setRole("USER");
         userRepository.save(user);
 
-        logger.info("New user registered: {}", user.getEmail());
+        logger.info("Registration successful: User {} registered successfully", user.getEmail());
         return "redirect:/login?registered=true";
     }
 
