@@ -1,40 +1,40 @@
-# Accès aux Services et Outils
+# Access to Services and Tools
 
-Ce document liste les commandes pour démarrer l'infrastructure du projet RetourMarche et les URLs pour y accéder localement.
+This document lists the commands to start the RetourMarche project infrastructure and the URLs to access them locally.
 
-## Démarrer les services
+## Starting the Services
 
-Pour démarrer correctement la base de données, l'application et tous les outils de monitoring / logs gérés par Docker Compose, exécutez la commande suivante à la racine du projet (`/home/cytech/01_Kasetsart/WebProjet/RetourMarche`) :
+To correctly start the database, the application, and all monitoring / log tools managed by Docker Compose, run the following command at the project root (`/home/cytech/01_Kasetsart/WebProjet/RetourMarche`):
 
 ```bash
 docker compose up -d
 ```
 
-Cette commande lancera les conteneurs en arrière-plan.
+This command will launch the containers in the background.
 
-*(Si vous avez fait des modifications dans le code de l'application, pensez à reconstruire l'image de l'application avec `docker compose up -d --build app`)*.
+*(If you have made changes to the application code, remember to rebuild the application image with `docker compose up -d --build app`)*.
 
 ---
 
-## Adresses Locales
+## Local Addresses
 
-Une fois les services démarrés, voici comment y accéder via votre navigateur :
+Once the services are started, here is how to access them via your browser:
 
-### 1. Application Principale (RetourMarche)
-- **URL** : [http://localhost:8080](http://localhost:8080)
-- **Reverse Proxy Nginx** : [http://localhost:8081](http://localhost:8081)
+### 1. Main Application (RetourMarche)
+- **URL**: [http://localhost:8080](http://localhost:8080)
+- **Nginx Reverse Proxy**: [http://localhost:8081](http://localhost:8081)
 
-### 2. Logs en temps réel (Dozzle)
-Dozzle offre une interface lisible pour voir l'ensemble des logs de tous les conteneurs, au format JSON ou texte standard. Les événements de connexion de l'application y seront clairement visibles.
-- **URL** : [http://localhost:8888](http://localhost:8888)
+### 2. Real-time Logs (Dozzle)
+Dozzle provides a readable interface to view logs from all containers, in JSON or standard text format. Application login events will be clearly visible here.
+- **URL**: [http://localhost:8888](http://localhost:8888)
 
-### 3. Monitoring et Dashboards (Grafana)
-Tableaux de bord visuels pour la surveillance des requêtes, des temps de latence et des ressources.
-- **URL** : [http://localhost:3000](http://localhost:3000)
-- **Identifiants par défaut** : 
-  - Utilisateur : `admin`
-  - Mot de passe : `admin`
+### 3. Monitoring and Dashboards (Grafana)
+Visual dashboards for monitoring requests, latency, and resources.
+- **URL**: [http://localhost:3000](http://localhost:3000)
+- **Default Credentials**: 
+  - User: `admin`
+  - Password: `admin`
 
-### 4. Métriques de l'Application (Prometheus)
-Outil qui collecte les métriques brutes de l'application (exposées via l'actuator).
-- **URL** : [http://localhost:9090](http://localhost:9090)
+### 4. Application Metrics (Prometheus)
+A tool that collects raw application metrics (exposed via Actuator).
+- **URL**: [http://localhost:9090](http://localhost:9090)
