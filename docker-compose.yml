@@ -47,10 +47,14 @@ services:
   dozzle:
     image: amir20/dozzle:latest
     container_name: shop-dozzle
+    environment:
+      - DOZZLE_ENABLE_ACTIONS=true
+      - DOZZLE_ENABLE_SHELL=true
     ports:
       - "8888:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - dozzle_data:/data
     networks:
       - shop-network
 
@@ -84,3 +88,4 @@ networks:
 
 volumes:
   postgres_data:
+  dozzle_data:
