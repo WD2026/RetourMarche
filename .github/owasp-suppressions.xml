@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+    "-//OWASP//DTD Dependency Suppression 1.3//EN"
+    "https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.dtd">
+
+<!--
+  OWASP Dependency-Check – False Positive Suppressions
+  =====================================================
+  Add entries here for CVEs that have been analysed and confirmed to be:
+    • Not applicable to this project (different component / attack vector)
+    • Already mitigated by another control
+    • Accepted risk (document the reason!)
+
+  HOW TO ADD AN ENTRY
+  ───────────────────
+  1. Run the workflow – note the CVE ID in the HTML report.
+  2. Add a <suppress> block below with the CVE ID and a justification.
+  3. Re-run the workflow to confirm the suppression works.
+
+  Reference: https://jeremylong.github.io/DependencyCheck/general/suppression.html
+-->
+<suppressions>
+
+  <!--
+    Example suppression (remove or adapt as real CVEs are encountered):
+
+    <suppress>
+      <notes>
+        CVE-XXXX-XXXXX affects the CLI component of library X which is not
+        used in this project (we only use the core API).
+        Reviewed: 2026-04-15 | Reviewer: team
+      </notes>
+      <cve>CVE-XXXX-XXXXX</cve>
+    </suppress>
+  -->
+
+</suppressions>

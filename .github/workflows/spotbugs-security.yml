@@ -1,0 +1,83 @@
+# ────────────────────────────────────────────────────────────────────────────
+# Workflow 1 – Static Security Analysis : SpotBugs + FindSecBugs
+#
+# SpotBugs analyses Java bytecode to detect common bug patterns.
+# The FindSecBugs plugin extends it with 100+ security-specific detectors
+# (SQL injection, XSS, insecure crypto, path traversal, etc.).
+#
+# Results are uploaded to GitHub Security tab as SARIF.
+# ────────────────────────────────────────────────────────────────────────────
+
+name: "Security – SpotBugs + FindSecBugs"
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+permissions:
+  contents: read
+  security-events: write   # required to upload SARIF to GitHub Advanced Security
+  actions: read
+
+jobs:
+  spotbugs:
+    name: SpotBugs Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout source code ──────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Set up Java 17 (matches the project's java.version) ──────────
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      # ── 3. Compile the project (SpotBugs analyses bytecode, not source) ─
+      # -DskipTests avoids needing a live DB during CI
+      - name: Build with Maven (compile only)
+        run: mvn --batch-mode compile -DskipTests
+
+      # ── 4. Run SpotBugs with the FindSecBugs plugin ──────────────────────
+      # The spotbugs-maven-plugin is invoked directly without being listed in
+      # pom.xml, so no project file changes are needed.
+      # effort=Max and threshold=Low maximise detection sensitivity.
+      - name: Run SpotBugs + FindSecBugs
+        run: |
+          mvn --batch-mode com.github.spotbugs:spotbugs-maven-plugin:4.8.3.1:spotbugs \
+            -Dspotbugs.effort=Max \
+            -Dspotbugs.threshold=Low \
+            -Dspotbugs.xmlOutput=true \
+            -Dspotbugs.outputDirectory=target/spotbugs \
+            -Dspotbugs.plugins=com.h3xstream.findsecbugs:findsecbugs-plugin:1.13.0
+
+      # ── 5. Convert SpotBugs XML → SARIF for GitHub Security tab ─────────
+      - name: Convert SpotBugs XML to SARIF
+        if: always()
+        uses: lcartey/spotbugs-sarif-action@v1
+        with:
+          spotbugs-xml: target/spotbugs/spotbugsXml.xml
+          sarif-output: target/spotbugs/spotbugs.sarif
+
+      # ── 6. Upload SARIF results ──────────────────────────────────────────
+      - name: Upload SARIF to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: target/spotbugs/spotbugs.sarif
+          category: spotbugs-findsecbugs
+
+      # ── 7. Keep raw XML as a downloadable artifact ───────────────────────
+      - name: Archive SpotBugs report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: spotbugs-report
+          path: target/spotbugs/
+          retention-days: 30

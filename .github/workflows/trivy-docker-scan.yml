@@ -1,0 +1,139 @@
+# ────────────────────────────────────────────────────────────────────────────
+# Workflow 3 – Docker Image / Container / Config Scanner : Trivy
+#
+# Trivy (by Aqua Security) is an all-in-one scanner that detects:
+#   • OS & application package vulnerabilities in the Docker image
+#   • Misconfigurations in the Dockerfile (e.g. running as root, no HEALTHCHECK)
+#   • Misconfigurations in docker-compose.yml (exposed secrets, privileged mode)
+#   • Hardcoded secrets in the source code
+#
+# Results are uploaded to GitHub Security tab as SARIF.
+# ────────────────────────────────────────────────────────────────────────────
+
+name: "Security – Trivy Docker & Config Scanner"
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+permissions:
+  contents: read
+  security-events: write   # upload SARIF
+
+jobs:
+  # ── Job A: Scan the built Docker image for OS/library vulnerabilities ─────
+  trivy-image-scan:
+    name: Trivy – Docker Image Vulnerabilities
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Build the multi-stage Dockerfile defined in the project.
+      # eclipse-temurin:17-jre-alpine is the final base layer; Trivy will
+      # scan all packages present in that runtime image.
+      - name: Build Docker image
+        run: docker build -t retourmarche:ci .
+
+      # Scan the built image.
+      # severity CRITICAL,HIGH: alert on serious issues while ignoring noise.
+      # exit-code 0: never fail the build (report-only); set to 1 to enforce gate.
+      - name: Trivy – scan image (CRITICAL + HIGH)
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: 'retourmarche:ci'
+          format: 'sarif'
+          output: 'trivy-image.sarif'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0'
+          ignore-unfixed: true   # skip CVEs with no available fix
+
+      - name: Upload image SARIF to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-image.sarif
+          category: trivy-image
+
+      - name: Archive image scan report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-image-report
+          path: trivy-image.sarif
+          retention-days: 30
+
+  # ── Job B: Scan Dockerfile + docker-compose.yml for misconfigurations ─────
+  trivy-config-scan:
+    name: Trivy – Dockerfile & Compose Misconfigurations
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # --scanners misconfig: detects bad practices in IaC / container config.
+      # Checks include: running as root, no USER directive, COPY with broad
+      # permissions, exposed secrets via ENV, missing resource limits, etc.
+      - name: Trivy – scan Dockerfile misconfigurations
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          scan-type: 'config'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-config.sarif'
+          exit-code: '0'
+
+      - name: Upload config SARIF to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-config.sarif
+          category: trivy-config
+
+      - name: Archive config scan report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-config-report
+          path: trivy-config.sarif
+          retention-days: 30
+
+  # ── Job C: Secret detection across the whole repository ──────────────────
+  trivy-secret-scan:
+    name: Trivy – Secret Detection
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Detects API keys, tokens, passwords accidentally committed to source.
+      # The project uses Stripe + DB credentials; this guards against leaks.
+      - name: Trivy – scan for secrets
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          scanners: 'secret'
+          format: 'sarif'
+          output: 'trivy-secrets.sarif'
+          exit-code: '0'
+
+      - name: Upload secrets SARIF to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-secrets.sarif
+          category: trivy-secrets
+
+      - name: Archive secrets scan report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-secrets-report
+          path: trivy-secrets.sarif
+          retention-days: 30
