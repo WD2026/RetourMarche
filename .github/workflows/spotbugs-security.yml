@@ -57,23 +57,7 @@ jobs:
             -Dspotbugs.outputDirectory=target/spotbugs \
             -Dspotbugs.plugins=com.h3xstream.findsecbugs:findsecbugs-plugin:1.13.0
 
-      # ── 5. Convert SpotBugs XML → SARIF for GitHub Security tab ─────────
-      - name: Convert SpotBugs XML to SARIF
-        if: always()
-        uses: lcartey/spotbugs-sarif-action@v1
-        with:
-          spotbugs-xml: target/spotbugs/spotbugsXml.xml
-          sarif-output: target/spotbugs/spotbugs.sarif
-
-      # ── 6. Upload SARIF results ──────────────────────────────────────────
-      - name: Upload SARIF to GitHub Security
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: target/spotbugs/spotbugs.sarif
-          category: spotbugs-findsecbugs
-
-      # ── 7. Keep raw XML as a downloadable artifact ───────────────────────
+      # ── 5. Keep raw XML as a downloadable artifact ───────────────────────
       - name: Archive SpotBugs report
         if: always()
         uses: actions/upload-artifact@v4
