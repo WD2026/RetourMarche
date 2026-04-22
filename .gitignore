@@ -1,0 +1,21 @@
+# Files to not commit to git, based on Github prototype for Maven projects
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+*.class
+# Eclipse m2e generated files
+.project
+# Eclipse Java Development Tools
+.classpath
+# VS Code and other IDE
+.vscode
+*.swp
+.idea
+# Environment variables
+.env
