@@ -17,6 +17,7 @@ buildNumber.properties
 .vscode
 *.swp
 .idea
-# Environment variables, but allow .env-example file
+# Environment variables, but allow .env-example or .env-sample file
 .env
 !.env-example
+!.env-sample
