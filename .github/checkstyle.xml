@@ -44,6 +44,12 @@
   <!-- Files must end with a newline -->
   <module name="NewlineAtEndOfFile"/>
 
+  <!-- Line length: 120 chars (relaxed from Google's 100 for Spring verbosity) -->
+  <module name="LineLength">
+    <property name="max"            value="120"/>
+    <property name="ignorePattern"  value="^(\s*\*|.*import|.*\*/).*$"/>
+  </module>
+
   <!-- ── Tree-walker checks (AST-level) ─────────────────────────────── -->
   <module name="TreeWalker">
 
@@ -79,12 +85,6 @@
     </module>
 
     <!-- ── Code style ──────────────────────────────────────────────── -->
-
-    <!-- Line length: 120 chars (relaxed from Google's 100 for Spring verbosity) -->
-    <module name="LineLength">
-      <property name="max"            value="120"/>
-      <property name="ignorePattern"  value="^(\s*\*|.*import|.*\*/).*$"/>
-    </module>
 
     <!-- Brace placement -->
     <module name="LeftCurly"/>
