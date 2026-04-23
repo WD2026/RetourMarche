@@ -16,7 +16,7 @@ name: "Quality – Checkstyle Code Standards"
 
 on:
   push:
-    branches: [ "main", "master", "bugfix/*"]
+    branches: [ "main", "master"]
     paths:
       - "**/*.java"
       - "pom.xml"

@@ -73,7 +73,7 @@
     <!-- Public methods/classes should have Javadoc (warn only) -->
     <module name="MissingJavadocMethod">
       <property name="scope"              value="public"/>
-      <property name="allowMissingParamTags"  value="false"/>
+      <!-- property name="allowMissingParamTags"  value="false"/ -->
       <!-- property name="allowMissingReturnTag"  value="true"/ -->
       <property name="severity"           value="warning"/>
     </module>
