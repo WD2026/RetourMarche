@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE suppressions PUBLIC
     "-//OWASP//DTD Dependency Suppression 1.3//EN"
-    "https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.dtd">
+    "https://dependency-check.github.io/DependencyCheck/dependency-suppression.1.3.dtd">
 
 <!--
   OWASP Dependency-Check – False Positive Suppressions
@@ -17,7 +17,7 @@
   2. Add a <suppress> block below with the CVE ID and a justification.
   3. Re-run the workflow to confirm the suppression works.
 
-  Reference: https://jeremylong.github.io/DependencyCheck/general/suppression.html
+  Reference: https://dependency-check.github.io/DependencyCheck/general/suppression.html
 -->
 <suppressions>
 
