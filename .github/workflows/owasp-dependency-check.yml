@@ -63,12 +63,15 @@ jobs:
       # Resolve all project dependencies once to speed up analysis step
       - name: Warm Maven dependency cache
         run: |
-          mvn --batch-mode --no-transfer-progress -nsu dependency:go-offline
+          mvn --batch-mode --no-transfer-progress -nsu dependency:go-offline \
+            -DincludeScope=runtime
 
       # ── 3. Run OWASP Dependency-Check via Maven plugin ───────────────────
       # The plugin downloads the NVD feed on first run (cached below).
       # failBuildOnCVSS=11 means the build never hard-fails (report only);
       # lower it to 7 or 8 in production to enforce a quality gate.
+      # Scope tuning: ignore test/provided/system/optional dependencies to
+      # focus on vulnerabilities that can impact production runtime.
       - name: Run OWASP Dependency-Check
         env:
           # Provide an NVD API key to avoid rate limiting (set in repo secrets)
@@ -79,6 +82,10 @@ jobs:
             -Dformat=ALL \
             -DnvdApiKey=${NVD_API_KEY} \
             -DdataDirectory=${HOME}/.m2/dependency-check-data \
+            -DskipTestScope=true \
+            -DskipProvidedScope=true \
+            -DskipSystemScope=true \
+            -DskipOptional=true \
             -DsuppressionFiles=.github/owasp-suppressions.xml \
             -DoutputDirectory=target/dependency-check
 
