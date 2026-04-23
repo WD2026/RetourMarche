@@ -48,9 +48,17 @@ jobs:
       # configLocation points to our custom ruleset in .github/checkstyle.xml.
       # failsOnError=false: never block the build; violations appear as warnings.
       # Set to true once the codebase is clean enough to enforce the gate.
+      # Jim: Maven is downloading a HUGE number of depend artifacts every time
+      # this is run.  Reduce this by using one or both of these:
+      # -Dcheckstyle.skipModules=true    
+      # -DskipTests
+      # Another choice is to run the Checkstyle CLI action instead of mvn action
+      # Checkstyle CLI Action downloads only Checkstyle (15MB).
       - name: Run Checkstyle
         run: |
           mvn --batch-mode checkstyle:checkstyle \
+            -Dcheckstyle.skipModules=true \
+            -DskipTests
             -Dcheckstyle.config.location=.github/checkstyle.xml \
             -Dcheckstyle.failsOnError=false \
             -Dcheckstyle.violationSeverity=warning \
