@@ -17,8 +17,22 @@ name: "Quality – Checkstyle Code Standards"
 on:
   push:
     branches: [ "main", "master", "bugfix/*"]
+    paths:
+      - "**/*.java"
+      - "pom.xml"
+      - ".github/checkstyle.xml"
+      - ".github/workflows/checkstyle.yml"
   pull_request:
     branches: [ "main", "master" ]
+    paths:
+      - "**/*.java"
+      - "pom.xml"
+      - ".github/checkstyle.xml"
+      - ".github/workflows/checkstyle.yml"
+
+concurrency:
+  group: checkstyle-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -42,6 +56,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
+          cache-dependency-path: pom.xml
 
       # ── 3. Run Checkstyle via Maven plugin ────────────────────────────────
       # The maven-checkstyle-plugin is invoked without modifying pom.xml.
@@ -56,9 +71,9 @@ jobs:
       # Checkstyle CLI Action downloads only Checkstyle (15MB).
       - name: Run Checkstyle
         run: |
-          mvn --batch-mode checkstyle:checkstyle \
+          ./mvnw -B -ntp checkstyle:checkstyle \
             -Dcheckstyle.skipModules=true \
-            -DskipTests
+            -DskipTests \
             -Dcheckstyle.config.location=.github/checkstyle.xml \
             -Dcheckstyle.failsOnError=false \
             -Dcheckstyle.violationSeverity=warning \
