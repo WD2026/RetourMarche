@@ -13,7 +13,7 @@ name: "Security – OWASP Dependency-Check"
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: [ "main", "master", "bugfix/*" ]
   pull_request:
     branches: [ "main", "master" ]
   # Run weekly so new CVEs are caught even without code changes
@@ -40,7 +40,30 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: maven
+
+      # Cache Maven dependencies between workflow runs
+      - name: Cache Maven local repository
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-m2-
+
+      # Cache OWASP Dependency-Check vulnerability database
+      - name: Cache Dependency-Check data
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/dependency-check-data
+          key: ${{ runner.os }}-dc-data-${{ github.workflow }}
+          restore-keys: |
+            ${{ runner.os }}-dc-data-${{ github.workflow }}-
+            ${{ runner.os }}-dc-data-
+
+      # Resolve all project dependencies once to speed up analysis step
+      - name: Warm Maven dependency cache
+        run: |
+          mvn --batch-mode --no-transfer-progress -nsu dependency:go-offline
 
       # ── 3. Run OWASP Dependency-Check via Maven plugin ───────────────────
       # The plugin downloads the NVD feed on first run (cached below).
@@ -51,10 +74,11 @@ jobs:
           # Provide an NVD API key to avoid rate limiting (set in repo secrets)
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: |
-          mvn --batch-mode org.owasp:dependency-check-maven:9.1.0:check \
+          mvn --batch-mode --no-transfer-progress -nsu org.owasp:dependency-check-maven:9.1.0:check \
             -DfailBuildOnCVSS=11 \
             -Dformat=ALL \
             -DnvdApiKey=${NVD_API_KEY} \
+            -DdataDirectory=${HOME}/.m2/dependency-check-data \
             -DsuppressionFiles=.github/owasp-suppressions.xml \
             -DoutputDirectory=target/dependency-check
 
