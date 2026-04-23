@@ -65,8 +65,8 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
-      # Expose Prometheus port only for testing.
-      # Not needed for production since Grafana can access via bridge network. 
+      # Publish Prometheus on the host for direct access.
+      # Grafana can also access it internally via the bridge network.
       - "9090:9090"
     networks:
       - shop-network
