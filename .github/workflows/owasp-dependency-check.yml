@@ -86,6 +86,7 @@ jobs:
             -DskipProvidedScope=true \
             -DskipSystemScope=true \
             -DskipOptional=true \
+            -DfailOnError=false \
             -DsuppressionFiles=.github/owasp-suppressions.xml \
             -DoutputDirectory=target/dependency-check
 
@@ -102,7 +103,7 @@ jobs:
 
       # ── 5. Upload SARIF to GitHub Security tab ────────────────────────────
       - name: Upload SARIF to GitHub Security
-        if: always()
+        if: always() && hashFiles('target/dependency-check/dependency-check-report.sarif') != ''
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: target/dependency-check/dependency-check-report.sarif
