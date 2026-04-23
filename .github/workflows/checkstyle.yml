@@ -16,7 +16,7 @@ name: "Quality – Checkstyle Code Standards"
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: [ "main", "master", "bugfix/*"]
   pull_request:
     branches: [ "main", "master" ]
 
