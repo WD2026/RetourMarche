@@ -115,7 +115,7 @@
     <module name="MagicNumber">
       <property name="ignoreNumbers"          value="-1, 0, 1, 2, 100"/>
       <property name="ignoreAnnotation"       value="true"/>
-      <property name="ignoreHashCodeMethods"  value="true"/>
+      <property name="ignoreHashCodeMethod"   value="true"/>
     </module>
 
     <!-- No System.out.println (use SLF4J logger instead) -->
