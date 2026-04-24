@@ -5,9 +5,9 @@ services:
     image: postgres:15-alpine
     container_name: shop-db
     environment:
-      POSTGRES_DB: shop
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${POSTGRES_DB:-shop}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Database password must be set}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -21,14 +21,14 @@ services:
     depends_on:
       - db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/shop
-      SPRING_DATASOURCE_DRIVER: org.postgresql.Driver
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: password
-      SPRING_JPA_HIBERNATE_DDL_AUTO: none
-      SPRING_FLYWAY_ENABLED: "true"
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:-jdbc:postgresql://db:5432/shop}
+      SPRING_DATASOURCE_DRIVER: ${SPRING_DATASOURCE_DRIVER:-org.postgresql.Driver}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:-password}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO:-none}
+      SPRING_FLYWAY_ENABLED: ${SPRING_FLYWAY_ENABLED:-true}
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-your_secret_key_here}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:?Stripe secret key must be set}
     networks:
       - shop-network
 
@@ -36,7 +36,8 @@ services:
     image: nginx:alpine
     container_name: shop-nginx
     ports:
-      - "8081:80"
+      - "${HTTP_PORT:-8081}:80"
+      - "${HTTPS_PORT:-443}:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
@@ -64,6 +65,8 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
+      # Publish Prometheus on the host for direct access.
+      # Grafana can also access it internally via the bridge network.
       - "9090:9090"
     networks:
       - shop-network
@@ -72,9 +75,9 @@ services:
     image: grafana/grafana:latest
     container_name: shop-grafana
     ports:
-      - "3000:3000"
+      - "${GRAFANA_HTTP_PORT:-3000}:3000"
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
     networks:
