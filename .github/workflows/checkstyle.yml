@@ -92,7 +92,7 @@ jobs:
       # ── 5. Keep XML report as downloadable artifact ───────────────────────
       - name: Archive Checkstyle report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: checkstyle-report
           path: target/checkstyle-result.xml
