@@ -1,0 +1,28 @@
+# To enable Dependabot version updates, you need to specify which
+# package ecosystems to update and where the package manifests are located.
+# See the documentation for configuration options:
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Enable version updates for Docker
+  - package-ecosystem: "docker"
+    # Look for a `Dockerfile` in the `root` directory
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  # Enable version updates for Maven
+  - package-ecosystem: "maven"
+    # Look for a `pom.xml` in the `root` directory
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    # Workflow files are stored in the default location of `.github/workflows`
+    # You can use `directory: "/"` and dependabot will look in /.github/workflows
+    directory: "/"
+    schedule:
+      interval: "weekly"
