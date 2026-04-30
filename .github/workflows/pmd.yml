@@ -48,9 +48,9 @@ jobs:
       # rulesets/java/quickstart.xml is PMD's curated starter ruleset.
       - name: Run PMD
         id: pmd
-        uses: pmd/pmd-github-action@967a81f8b657c87f7c3e96b62301cb1a48efef29
+        uses: pmd/pmd-github-action@v2
         with:
-          rulesets: 'rulesets/java/quickstart.xml'
+          rulesets: 'category/java/errorprone.xml,category/java/bestpractices.xml'
           sourcePath: 'src/main/java'
           analyzeModifiedFilesOnly: false
 
