@@ -60,7 +60,7 @@ jobs:
       # ── 5. Keep raw XML as a downloadable artifact ───────────────────────
       - name: Archive SpotBugs report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: spotbugs-report
           path: target/spotbugs*.xml
