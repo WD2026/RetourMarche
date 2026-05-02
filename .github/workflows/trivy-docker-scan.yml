@@ -30,7 +30,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # Build the multi-stage Dockerfile defined in the project.
       # eclipse-temurin:17-jre-alpine is the final base layer; Trivy will
@@ -42,7 +42,7 @@ jobs:
       # severity CRITICAL,HIGH: alert on serious issues while ignoring noise.
       # exit-code 0: never fail the build (report-only); set to 1 to enforce gate.
       - name: Trivy – scan image (CRITICAL + HIGH)
-        uses: aquasecurity/trivy-action@0.20.0
+        uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'retourmarche:ci'
           format: 'sarif'
@@ -52,7 +52,7 @@ jobs:
           ignore-unfixed: true   # skip CVEs with no available fix
 
       - name: Upload image SARIF to GitHub Security
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: trivy-image.sarif
@@ -60,7 +60,7 @@ jobs:
 
       - name: Archive image scan report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: trivy-image-report
           path: trivy-image.sarif
@@ -73,13 +73,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # --scanners misconfig: detects bad practices in IaC / container config.
       # Checks include: running as root, no USER directive, COPY with broad
       # permissions, exposed secrets via ENV, missing resource limits, etc.
       - name: Trivy – scan Dockerfile misconfigurations
-        uses: aquasecurity/trivy-action@0.20.0
+        uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'config'
           scan-ref: '.'
@@ -88,7 +88,7 @@ jobs:
           exit-code: '0'
 
       - name: Upload config SARIF to GitHub Security
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: trivy-config.sarif
@@ -96,7 +96,7 @@ jobs:
 
       - name: Archive config scan report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: trivy-config-report
           path: trivy-config.sarif
@@ -109,12 +109,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # Detects API keys, tokens, passwords accidentally committed to source.
       # The project uses Stripe + DB credentials; this guards against leaks.
       - name: Trivy – scan for secrets
-        uses: aquasecurity/trivy-action@0.20.0
+        uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'fs'
           scan-ref: '.'
@@ -124,7 +124,7 @@ jobs:
           exit-code: '0'
 
       - name: Upload secrets SARIF to GitHub Security
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: trivy-secrets.sarif
@@ -132,7 +132,7 @@ jobs:
 
       - name: Archive secrets scan report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: trivy-secrets-report
           path: trivy-secrets.sarif

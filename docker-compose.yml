@@ -24,7 +24,7 @@ services:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:-jdbc:postgresql://db:5432/shop}
       SPRING_DATASOURCE_DRIVER: ${SPRING_DATASOURCE_DRIVER:-org.postgresql.Driver}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:-postgres}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:-password}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:?Database password must be set}
       SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO:-none}
       SPRING_FLYWAY_ENABLED: ${SPRING_FLYWAY_ENABLED:-true}
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
@@ -45,17 +45,23 @@ services:
     networks:
       - shop-network
 
-  dozzle:
-    image: amir20/dozzle:latest
-    container_name: shop-dozzle
-    environment:
-      - DOZZLE_ENABLE_ACTIONS=true
-      - DOZZLE_ENABLE_SHELL=true
+  loki:
+    image: grafana/loki:latest
+    container_name: shop-loki
     ports:
-      - "8888:8080"
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - shop-network
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: shop-promtail
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - dozzle_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./promtail-config.yml:/etc/promtail/config.yml:ro
+    command: -config.file=/etc/promtail/config.yml
     networks:
       - shop-network
 
@@ -77,7 +83,7 @@ services:
     ports:
       - "${GRAFANA_HTTP_PORT:-3000}:3000"
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:?Grafana admin password must be set}
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
     networks:
@@ -91,4 +97,3 @@ networks:
 
 volumes:
   postgres_data:
-  dozzle_data:
