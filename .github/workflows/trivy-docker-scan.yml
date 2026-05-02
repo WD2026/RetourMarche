@@ -60,7 +60,7 @@ jobs:
 
       - name: Archive image scan report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: trivy-image-report
           path: trivy-image.sarif
@@ -96,7 +96,7 @@ jobs:
 
       - name: Archive config scan report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: trivy-config-report
           path: trivy-config.sarif
@@ -132,7 +132,7 @@ jobs:
 
       - name: Archive secrets scan report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: trivy-secrets-report
           path: trivy-secrets.sarif

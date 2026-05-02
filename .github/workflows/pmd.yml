@@ -65,7 +65,7 @@ jobs:
       # ── 5. Keep report as a downloadable artifact ─────────────────────────
       - name: Archive PMD report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: pmd-report
           path: pmd-report.sarif
